@@ -27,12 +27,6 @@ class shoppimon:
     def patchRequest(self, endpoint, payload):
         return requests.patch(endpoint, json=payload, headers=self.getHeaders({'Authorization': "Bearer " + self.getKey()})).json()
 
-    def setInterval(self, time = None):
-        self.postRequest(self.ENDPOINT, {
-            "active" : "false" if time == None else "true",
-            "execution_interval": time if time is not None else 0
-        })
-
     def fetchKey(self):
         r = self.postRequest(self.ENDPOINT_OAUTH, {
             "grant_type": "client_credentials",
