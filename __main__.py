@@ -3,56 +3,14 @@ import requests
 
 class shoppimon:
 
-    BEARER = None
-    ENDPOINT = "https://app.shoppimon.com"
     ENDPOINT_OAUTH = "https://api.shoppimon.com/oauth"
-    ENDPOINT_CURRENT_USER = "https://api.shoppimon.com/account"
     ENDPOINT_WEBSITE = "https://api.shoppimon.com/website/%s"
     ENDPOINT_WEBSITES = "https://api.shoppimon.com/website?account_id=%s"
 
     def __init__(self, id, secret):
         self.id = id
         self.secret = secret
-
-    def fetchKey(self):
-        r = self.postRequest(self.ENDPOINT_OAUTH, {
-            "grant_type": "client_credentials",
-            "client_id": self.id,
-            "client_secret": self.secret
-        }, False)
-        self.BEARER = r['access_token']
-
-    def getKey(self):
-        """
-        :return: str 
-        """
-        if self.BEARER is None:
-            self.fetchKey()
-        return self.BEARER
-
-    def postRequest(self, endpoint, request, addKey=True):
-        headers = {
-            "Accept": "application/json",
-            "content-type": "application/json",
-        }
-        if addKey == True:
-            headers['Authorization'] = "Bearer " + self.getKey()
-            r = requests.post(endpoint, json=request, headers=headers)
-        else:
-            r = requests.post(endpoint, json=request)
-        return r.json()
-
-    def getRequest(self, endpoint, addKey=True):
-        headers = {
-            "Accept": "application/json",
-            "content-type": "application/json",
-        }
-        if addKey == True:
-            headers['Authorization'] = "Bearer " + self.getKey()
-            r = requests.get(endpoint, headers=headers)
-        else:
-            r = requests.get(endpoint)
-        return r.json()
+        self.bearer = None
 
     def getHeaders(self, data):
         return {**{
@@ -60,9 +18,14 @@ class shoppimon:
             "content-type": "application/json",
         }, **data}
 
+    def postRequest(self, endpoint, request, addKey=True):
+        return requests.post(endpoint, json=request, headers=self.getHeaders({'Authorization': "Bearer " + self.getKey()} if addKey else {})).json()
+
+    def getRequest(self, endpoint):
+        return requests.get(endpoint, headers=self.getHeaders({'Authorization': "Bearer " + self.getKey()})).json()
+
     def patchRequest(self, endpoint, payload):
-        r = requests.patch(endpoint, json=payload, headers=self.getHeaders({'Authorization': "Bearer " + self.getKey()}))
-        return r.json()
+        return requests.patch(endpoint, json=payload, headers=self.getHeaders({'Authorization': "Bearer " + self.getKey()})).json()
 
     def setInterval(self, time = None):
         self.postRequest(self.ENDPOINT, {
@@ -70,50 +33,53 @@ class shoppimon:
             "execution_interval": time if time is not None else 0
         })
 
+    def fetchKey(self):
+        r = self.postRequest(self.ENDPOINT_OAUTH, {
+            "grant_type": "client_credentials",
+            "client_id": self.id,
+            "client_secret": self.secret
+        }, False)
+        self.bearer = r['access_token']
+
+    def getKey(self):
+        """
+        :return: str 
+        """
+        if self.bearer is None:
+            self.fetchKey()
+        return self.bearer
+
     def getAccountDetails(self):
-        r = self.getRequest(self.ENDPOINT_CURRENT_USER)
-        return r
+        return self.getRequest(self.ENDPOINT_CURRENT_USER)
 
     def getWebsites(self, customerid):
-        r = self.getRequest(self.ENDPOINT_WEBSITES % customerid)
-        return r
+        return self.getRequest(self.ENDPOINT_WEBSITES % customerid)
 
     def disableTesting(self, websiteId):
-        r = self.patchRequest(self.ENDPOINT_WEBSITE % websiteId, {
-            "active": False
-        })
-        return r
+        return self.patchRequest(self.ENDPOINT_WEBSITE % websiteId, {"active": False})
 
     def enableTesting(self, websiteId):
-        r = self.patchRequest(self.ENDPOINT_WEBSITE % websiteId, {
-            "active": True
-        })
-        return r
+        return self.patchRequest(self.ENDPOINT_WEBSITE % websiteId, {"active": True})
 
     @classmethod
     def offline(cls, id, secret, websiteId):
-        obj = cls(id, secret)
-        obj.disableTesting(websiteId)
+        cls(id, secret).disableTesting(websiteId)
 
     @classmethod
     def online(cls, id, secret, websiteId):
-        obj = cls(id, secret)
-        obj.enableTesting(websiteId)
+        cls(id, secret).enableTesting(websiteId)
 
     @classmethod
     def getShops(cls, id, secret):
-        obj = cls(id, secret)
         r = {}
-        for account in obj.getAccountDetails()['_embedded']['account']:
+        for account in cls(id, secret).getAccountDetails()['_embedded']['account']:
             r[account['id']] = account['name']
-            #print("id: %s | name: %s" % (account['id'], account['name']))
         return r
 
     @classmethod
     def getWebsitesForAccount(cls, id, secret, customerid):
-        obj = cls(id, secret)
         r = {}
-        for website in obj.getWebsites(customerid)['_embedded']['website']:
+        for website in cls(id, secret).getWebsites(customerid)['_embedded']['website']:
             r[website['id']] = {website['id'], website['name'], website['base_url']}
         return r
 
