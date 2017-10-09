@@ -21,7 +21,7 @@ pip3 install -r requirements.txt
 
 | Command | Argument | Description | Usage |
 |----------|-----------|-------------------------------------------------------------|-------------------------------------------------|
-| online | WebsiteId | Will start the shoppimon monitoring | python3 . online {client} {secret} {websiteid} |
-| offline | WebsiteId | Will stop the shoppimon monitoring | python3 . offline {client} {secret} {websiteid} |
-| shops |  | Here you can get the ShopId, will print a list of customers | python3 . shops {client} {secret} |
-| websites | ShopId | Here you can get the website id | python3 . websites {client} {secret} {shopid} |
+| online | WebsiteId | Will start the shoppimon monitoring | ```python3 . online {client} {secret} {websiteid}``` |
+| offline | WebsiteId | Will stop the shoppimon monitoring | ```python3 . offline {client} {secret} {websiteid}``` |
+| shops |  | Here you can get the ShopId, will print a list of customers | ```python3 . shops {client} {secret}``` |
+| websites | ShopId | Here you can get the website id | ```python3 . websites {client} {secret} {shopid}``` |
