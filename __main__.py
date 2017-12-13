@@ -71,7 +71,7 @@ class Shoppimon:
         return self.bearer
 
     def get_account_details(self):
-        return self.get_request(config.ENDPOINT_CURRENT_USER)
+        return self.get_request(config.ENDPOINT_USER_INFO)
 
     def get_websites(self, customer_id):
         return self.get_request(config.ENDPOINT_WEBSITES % customer_id)
