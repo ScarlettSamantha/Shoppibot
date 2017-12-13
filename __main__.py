@@ -1,83 +1,88 @@
-import os,sys
+# buildins
+import os
+import sys
+# dep: requests
 import requests
+# ./config.py
+import config
 
-class shoppimon:
 
-    ENDPOINT_OAUTH = "https://api.shoppimon.com/oauth"
-    ENDPOINT_WEBSITE = "https://api.shoppimon.com/website/%s"
-    ENDPOINT_WEBSITES = "https://api.shoppimon.com/website?account_id=%s"
-
-    def __init__(self, id, secret):
-        self.id = id
+class Shoppimon:
+    def __init__(self, client_id, secret):
+        self.client_id = client_id
         self.secret = secret
         self.bearer = None
 
-    def getHeaders(self, data):
+    @staticmethod
+    def get_headers(data):
         return {**{
             "Accept": "application/json",
             "content-type": "application/json",
         }, **data}
 
-    def postRequest(self, endpoint, request, addKey=True):
-        return requests.post(endpoint, json=request, headers=self.getHeaders({'Authorization': "Bearer " + self.getKey()} if addKey else {})).json()
+    def post_request(self, endpoint, request, add_key=True):
+        return requests.post(endpoint, json=request, headers=self.get_headers(
+            {'Authorization': "Bearer " + self.get_key()} if add_key else {})).json()
 
-    def getRequest(self, endpoint):
-        return requests.get(endpoint, headers=self.getHeaders({'Authorization': "Bearer " + self.getKey()})).json()
+    def get_request(self, endpoint):
+        return requests.get(endpoint, headers=self.get_headers({'Authorization': "Bearer " + self.get_key()})).json()
 
-    def patchRequest(self, endpoint, payload):
-        return requests.patch(endpoint, json=payload, headers=self.getHeaders({'Authorization': "Bearer " + self.getKey()})).json()
+    def patch_request(self, endpoint, payload):
+        return requests.patch(endpoint, json=payload,
+                              headers=self.get_headers({'Authorization': "Bearer " + self.get_key()})).json()
 
-    def fetchKey(self):
-        r = self.postRequest(self.ENDPOINT_OAUTH, {
+    def fetch_key(self):
+        r = self.post_request(config.ENDPOINT_OAUTH, {
             "grant_type": "client_credentials",
-            "client_id": self.id,
+            "client_id": self.client_id,
             "client_secret": self.secret
         }, False)
         self.bearer = r['access_token']
 
-    def getKey(self):
+    def get_key(self):
         """
         :return: str 
         """
         if self.bearer is None:
-            self.fetchKey()
+            self.fetch_key()
         return self.bearer
 
-    def getAccountDetails(self):
-        return self.getRequest(self.ENDPOINT_CURRENT_USER)
+    def get_account_details(self):
+        return self.get_request(config.ENDPOINT_CURRENT_USER)
 
-    def getWebsites(self, customerid):
-        return self.getRequest(self.ENDPOINT_WEBSITES % customerid)
+    def get_websites(self, customer_id):
+        return self.get_request(config.ENDPOINT_WEBSITES % customer_id)
 
-    def disableTesting(self, websiteId):
-        return self.patchRequest(self.ENDPOINT_WEBSITE % websiteId, {"active": False})
+    def disable_testing(self, website_id):
+        return self.patch_request(config.ENDPOINT_WEBSITE % website_id, {"active": False})
 
-    def enableTesting(self, websiteId):
-        return self.patchRequest(self.ENDPOINT_WEBSITE % websiteId, {"active": True})
-
-    @classmethod
-    def offline(cls, id, secret, websiteId):
-        cls(id, secret).disableTesting(websiteId)
+    def enable_testing(self, website_id):
+        return self.patch_request(config.ENDPOINT_WEBSITE % website_id, {"active": True})
 
     @classmethod
-    def online(cls, id, secret, websiteId):
-        cls(id, secret).enableTesting(websiteId)
+    def offline(cls, id, secret, website_id):
+        cls(id, secret).disable_testing(website_id)
 
     @classmethod
-    def getShops(cls, id, secret):
+    def online(cls, id, secret, website_id):
+        cls(id, secret).enable_testing(website_id)
+
+    @classmethod
+    def get_shops(cls, id, secret):
         r = {}
-        for account in cls(id, secret).getAccountDetails()['_embedded']['account']:
+        for account in cls(id, secret).get_account_details()['_embedded']['account']:
             r[account['id']] = account['name']
         return r
 
     @classmethod
-    def getWebsitesForAccount(cls, id, secret, customerid):
+    def get_website_for_account(cls, id, secret, customer_id):
         r = {}
-        for website in cls(id, secret).getWebsites(customerid)['_embedded']['website']:
+        for website in cls(id, secret).get_websites(customer_id)['_embedded']['website']:
             r[website['id']] = {website['id'], website['name'], website['base_url']}
         return r
 
-def argumentCheck(req = 4):
+
+def argument_check(req=4):
     req += 1
     if sys.argv.__len__() < req:
         print('We need %s arguments we got %s' % (req, sys.argv.__len__()))
@@ -88,26 +93,29 @@ def argumentCheck(req = 4):
                 argument = 'websiteid'
             else:
                 argument = 'unknown'
-            print("python3 %s %s [clientid] [clientsecret] [argument(%s)]" % (os.path.abspath(__file__), sys.argv[1] if sys.argv.__len__() > 1 else '[action]', argument))
+            print("python3 %s %s [clientid] [clientsecret] [argument(%s)]" % (
+            os.path.abspath(__file__), sys.argv[1] if sys.argv.__len__() > 1 else '[action]', argument))
             exit(2)
         elif req == 4:
-            print("python3 %s %s [clientid] [clientsecret]" % (os.path.abspath(__file__), sys.argv[1] if sys.argv.__len__() > 1 else '[action]'))
+            print("python3 %s %s [clientid] [clientsecret]" % (
+            os.path.abspath(__file__), sys.argv[1] if sys.argv.__len__() > 1 else '[action]'))
             exit(2)
+
 
 if __name__ == "__main__":
     action = sys.argv[1]
 
     if action == 'offline':
-        argumentCheck(4)
-        shoppimon.offline(sys.argv[2], sys.argv[3], sys.argv[4])
+        argument_check(4)
+        Shoppimon.offline(sys.argv[2], sys.argv[3], sys.argv[4])
     elif action == 'online':
-        argumentCheck(4)
-        shoppimon.online(sys.argv[2], sys.argv[3], sys.argv[4])
+        argument_check(4)
+        Shoppimon.online(sys.argv[2], sys.argv[3], sys.argv[4])
     elif action == 'shops':
-        argumentCheck(3)
-        for index, value in shoppimon.getShops(sys.argv[2], sys.argv[3]).items():
+        argument_check(3)
+        for index, value in Shoppimon.get_shops(sys.argv[2], sys.argv[3]).items():
             print("id: %s | name: %s" % (index, value))
     elif action == 'websites':
-        argumentCheck(4)
-        for index, website in shoppimon.getWebsitesForAccount(sys.argv[2], sys.argv[3], sys.argv[4]).items():
+        argument_check(4)
+        for index, website in Shoppimon.get_website_for_account(sys.argv[2], sys.argv[3], sys.argv[4]).items():
             print("id: %s | name: %s | url: %s" % tuple(website))
