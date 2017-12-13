@@ -266,7 +266,7 @@ if __name__ == "__main__":
         Shoppimon.online(config.CLIENT_ID, config.CLIENT_SECRET, config.WEBSITE_ID)
     elif args.action == 'shops':
         for index, value in Shoppimon.get_shops(config.CLIENT_ID, config.CLIENT_SECRET).items():
-            print("id: %s | name: %s" % (index, value))
+            print("shop-id: %s | name: %s" % (index, value))
     elif args.action == 'websites':
         for index, website in Shoppimon.get_website_for_account(config.CLIENT_ID, config.CLIENT_SECRET,
                                                                 config.SHOP_ID).items():
