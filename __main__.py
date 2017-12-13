@@ -35,7 +35,7 @@ class Shoppimon:
     def get_website_for_account(cls, client_id, secret, customer_id):
         r = {}
         for domain in cls(client_id, secret).get_websites(customer_id)['_embedded']['website']:
-            r[domain['id']] = {domain['id'], domain['name'], domain['base_url']}
+            r[domain['id']] = {'id': domain['id'], 'name': domain['name'], 'url': domain['base_url']}
         return r
 
     def __init__(self, client_id, secret):
@@ -132,4 +132,4 @@ if __name__ == "__main__":
             print("id: %s | name: %s" % (index, value))
     elif args.action == 'websites':
         for index, website in Shoppimon.get_website_for_account(config.CLIENT_ID, config.CLIENT_SECRET, config.WEBSITE_ID).items():
-            print("id: %s | name: %s | url: %s" % tuple(website))
+            print("website-id: %s | name: %s | url: %s" % (website['id'], website['name'], website['url']))
