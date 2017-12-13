@@ -1,4 +1,4 @@
-# buildins
+# build-ins
 import os
 import sys
 # dep: requests
@@ -17,25 +17,25 @@ class Shoppimon:
         }, **data}
 
     @classmethod
-    def offline(cls, id, secret, website_id):
-        cls(id, secret).disable_testing(website_id)
+    def offline(cls, client_id, secret, website_id):
+        cls(client_id, secret).disable_testing(website_id)
 
     @classmethod
-    def online(cls, id, secret, website_id):
-        cls(id, secret).enable_testing(website_id)
+    def online(cls, client_id, secret, website_id):
+        cls(client_id, secret).enable_testing(website_id)
 
     @classmethod
-    def get_shops(cls, id, secret):
+    def get_shops(cls, client_id, secret):
         r = {}
-        for account in cls(id, secret).get_account_details()['_embedded']['account']:
+        for account in cls(client_id, secret).get_account_details()['_embedded']['account']:
             r[account['id']] = account['name']
         return r
 
     @classmethod
-    def get_website_for_account(cls, id, secret, customer_id):
+    def get_website_for_account(cls, client_id, secret, customer_id):
         r = {}
-        for website in cls(id, secret).get_websites(customer_id)['_embedded']['website']:
-            r[website['id']] = {website['id'], website['name'], website['base_url']}
+        for domain in cls(client_id, secret).get_websites(customer_id)['_embedded']['website']:
+            r[domain['id']] = {domain['id'], domain['name'], domain['base_url']}
         return r
 
     def __init__(self, client_id, secret):
@@ -89,17 +89,17 @@ def argument_check(req=4):
         print('We need %s arguments we got %s' % (req, sys.argv.__len__()))
         if req == 5:
             if sys.argv[1] == 'websites':
-                argument = 'clientid'
+                argument = 'client_id'
             elif sys.argv[1] in ('online', 'offline'):
-                argument = 'websiteid'
+                argument = 'website_id'
             else:
                 argument = 'unknown'
-            print("python3 %s %s [clientid] [clientsecret] [argument(%s)]" % (
-            os.path.abspath(__file__), sys.argv[1] if sys.argv.__len__() > 1 else '[action]', argument))
+            print("python3 %s %s [client_id] [client_secret] [argument(%s)]" % (
+             os.path.abspath(__file__), sys.argv[1] if sys.argv.__len__() > 1 else '[action]', argument))
             exit(2)
         elif req == 4:
-            print("python3 %s %s [clientid] [clientsecret]" % (
-            os.path.abspath(__file__), sys.argv[1] if sys.argv.__len__() > 1 else '[action]'))
+            print("python3 %s %s [client_id] [client_secret]" % (
+             os.path.abspath(__file__), sys.argv[1] if sys.argv.__len__() > 1 else '[action]'))
             exit(2)
 
 
