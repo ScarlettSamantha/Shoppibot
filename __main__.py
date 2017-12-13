@@ -1,3 +1,36 @@
+#!/usr/bin/env python3
+
+""" This module can be used to automate shoppimon interactions.
+This module contains a number of high level functions (the static methods)
+Which can be used for fast actions. 
+
+And it contains a number of low level methods which can be wrapped to provide 
+functionality.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <http://www.gnu.org/licenses/>.
+"""
+
+__author__ = "Scarlett Samantha Verheul"
+__email__ = "scarlett@arcane-tech.nl"
+__contact__ = __email__
+__copyright__ = "Copyright 2017, Supportdesk B.V"
+__credits__ = [__author__]
+__date__ = "13/12/17"
+__deprecated__ = False
+__license__ = "GPLv3"
+__maintainer__ = '%s %s' % (__author__, __email__)
+__status__ = "Production"
+__version__ = "1.0.0"
+
 # build-ins
 import argparse
 import logging
