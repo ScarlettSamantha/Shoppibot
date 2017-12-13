@@ -59,7 +59,7 @@ SHOP_ID = None
 ```
 If one of the bottom 4 values is None it will require CLI input of the matching var.
 
-# Usage #gt 
+# Usage #
 There is a --help command available if you require more in-depth explanation of the arguments.
 
 | Command | Argument | Description | Usage |
@@ -68,4 +68,4 @@ There is a --help command available if you require more in-depth explanation of 
 | offline | WebsiteId | Will stop the shoppimon monitoring | ```python3 . -action="offline" -context_id="{websiteid}" -client_id="{client}" -client_secret="{secret}"``` |
 | shops |  | Here you can get the ShopId, will print a list of customers | ```python3 . -action="shops" -client_id="{client}" -client_secret="{secret}"``` |
 | websites | ShopId | Here you can get the website id | ```python3 . -action="websites" -context_id="{shopid}" -client_id="{client}" -client_secret="{secret}"``` |
-| websites-all | | Here you get a structured list of all the websites and the shops above it | ```python3 . -action="websites" -context_id="{shopid}" -client_id="{client}" -client_secret="{secret}"``` |
+| websites-all | | Here you get a structured list of all the websites and the shops above it | ```python3 . -action="websites-all" -context_id="{shopid}" -client_id="{client}" -client_secret="{secret}"``` |
