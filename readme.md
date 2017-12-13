@@ -25,7 +25,7 @@ Better:
 Quick:
 ```bash
 # Clone repo
-git clone bitbucket.org:arekana/shoppibot.git ~/scripts/shoppibot
+git clone git@github.com:ScarlettSamantha/Shoppibot.git ~/scripts/shoppibot
 # Go into shoppibot folder
 cd ~/scripts/shoppibot
 # Install dependancies
@@ -59,7 +59,7 @@ SHOP_ID = None
 ```
 If one of the bottom 4 values is None it will require CLI input of the matching var.
 
-# Usage #
+# Usage #gt 
 There is a --help command available if you require more in-depth explanation of the arguments.
 
 | Command | Argument | Description | Usage |
