@@ -225,10 +225,10 @@ class Shoppimon:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('action', choices=['offline', 'online', 'shops', 'websites'], help=config.ACTION_HELP)
-    parser.add_argument('context_id', nargs='?', help=config.CONTEXT_ID_HELP)
-    parser.add_argument('client_id', nargs='?', help=config.CLIENT_ID_HELP % config.SHOPPIMON_API_ACCOUNT_PAGE)
-    parser.add_argument('client_secret', nargs='?', help=config.CLIENT_SECRET_HELP % config.SHOPPIMON_API_ACCOUNT_PAGE)
+    parser.add_argument('-action', choices=['offline', 'online', 'shops', 'websites'], help=config.ACTION_HELP)
+    parser.add_argument('-context_id', nargs='?', help=config.CONTEXT_ID_HELP)
+    parser.add_argument('-client_id', nargs='?', help=config.CLIENT_ID_HELP % config.SHOPPIMON_API_ACCOUNT_PAGE)
+    parser.add_argument('-client_secret', nargs='?', help=config.CLIENT_SECRET_HELP % config.SHOPPIMON_API_ACCOUNT_PAGE)
     parser.add_argument("--debug", "-d", action="store_true")
     parser.add_argument("--verbose", "-v", action="store_true")
     args = parser.parse_args()
@@ -238,7 +238,7 @@ if __name__ == "__main__":
     if args.client_secret is None and config.CLIENT_SECRET is None:
         parser.error('client_secret is not set in the config')
     if args.action != 'shops' and args.context_id is None and config.WEBSITE_ID is None:
-        parser.error('website_id is required for this method call')
+        parser.error('context_id is required for this method call')
 
     if args.client_id is not None:
         config.CLIENT_ID = args.client_id
@@ -258,7 +258,7 @@ if __name__ == "__main__":
     logging.debug('Chosen action: %s' % args.action)
     logging.debug('Using Client_id: %s' % config.CLIENT_ID)
     logging.debug('Using Client_secret: %s ' % config.CLIENT_SECRET)
-    logging.debug('Using Context_id: %s' % config.WEBSITE_ID + ' ' + config.SHOP_ID)
+    logging.debug('Using Context_id: %s' % config.WEBSITE_ID if config.WEBSITE_ID is not None else 'NaN' + ' ' + config.SHOP_ID if config.SHOP_ID is not None else 'NaN')
 
     if args.action == 'offline':
         Shoppimon.offline(config.CLIENT_ID, config.CLIENT_SECRET, config.WEBSITE_ID)

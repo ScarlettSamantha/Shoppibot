@@ -64,7 +64,7 @@ There is a --help command available if you require more in-depth explanation of 
 
 | Command | Argument | Description | Usage |
 |----------|-----------|-------------------------------------------------------------|-------------------------------------------------|
-| online | WebsiteId | Will start the shoppimon monitoring | ```python3 . online {websiteid} {client} {secret}``` |
-| offline | WebsiteId | Will stop the shoppimon monitoring | ```python3 . offline {websiteid} {client} {secret}``` |
-| shops |  | Here you can get the ShopId, will print a list of customers | ```python3 . shops {client} {secret}``` |
-| websites | ShopId | Here you can get the website id | ```python3 . websites {shopid} {client} {secret}``` |
+| online | WebsiteId | Will start the shoppimon monitoring | ```python3 . -action="online" -context_id="{websiteid}" -client_id="{client}" -client_secret="{secret}"``` |
+| offline | WebsiteId | Will stop the shoppimon monitoring | ```python3 . -action="offline" -context_id="{websiteid}" -client_id="{client}" -client_secret="{secret}"``` |
+| shops |  | Here you can get the ShopId, will print a list of customers | ```python3 . -action="shops" -client_id="{client}" -client_secret="{secret}"``` |
+| websites | ShopId | Here you can get the website id | ```python3 . -action="websites" -context_id="{shopid}" -client_id="{client}" -client_secret="{secret}"``` |
