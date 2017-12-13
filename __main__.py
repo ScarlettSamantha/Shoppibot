@@ -226,7 +226,7 @@ class Shoppimon:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('action', choices=['offline', 'online', 'shops', 'websites'], help=config.ACTION_HELP)
-    parser.add_argument('website_id', nargs='?', help=config.WEBSITE_ID_HELP)
+    parser.add_argument('context_id', nargs='?', help=config.CONTEXT_ID_HELP)
     parser.add_argument('client_id', nargs='?', help=config.CLIENT_ID_HELP % config.SHOPPIMON_API_ACCOUNT_PAGE)
     parser.add_argument('client_secret', nargs='?', help=config.CLIENT_SECRET_HELP % config.SHOPPIMON_API_ACCOUNT_PAGE)
     parser.add_argument("--debug", "-d", action="store_true")
@@ -237,16 +237,19 @@ if __name__ == "__main__":
         parser.error('client_id is not set in config or given')
     if args.client_secret is None and config.CLIENT_SECRET is None:
         parser.error('client_secret is not set in the config')
-    if args.action != 'shops' and args.website_id is None and config.WEBSITE_ID is None:
+    if args.action != 'shops' and args.context_id is None and config.WEBSITE_ID is None:
         parser.error('website_id is required for this method call')
 
     if args.client_id is not None:
         config.CLIENT_ID = args.client_id
     if args.client_secret is not None:
         config.CLIENT_SECRET = args.client_secret
-    if args.website_id is not None:
-        config.WEBSITE_ID = args.website_id
-
+    if args.context_id is not None:
+        if args.action != 'websites':
+            config.WEBSITE_ID = args.context_id  
+        else:
+            config.SHOP_ID = args.context_id
+        
     if args.verbose:
         logging.basicConfig(level=logging.INFO)
     if args.debug:
@@ -255,7 +258,7 @@ if __name__ == "__main__":
     logging.debug('Chosen action: %s' % args.action)
     logging.debug('Using Client_id: %s' % config.CLIENT_ID)
     logging.debug('Using Client_secret: %s ' % config.CLIENT_SECRET)
-    logging.debug('Using Website_id: %s' % config.WEBSITE_ID)
+    logging.debug('Using Context_id: %s' % config.WEBSITE_ID + ' ' + config.SHOP_ID)
 
     if args.action == 'offline':
         Shoppimon.offline(config.CLIENT_ID, config.CLIENT_SECRET, config.WEBSITE_ID)
@@ -266,5 +269,5 @@ if __name__ == "__main__":
             print("id: %s | name: %s" % (index, value))
     elif args.action == 'websites':
         for index, website in Shoppimon.get_website_for_account(config.CLIENT_ID, config.CLIENT_SECRET,
-                                                                config.WEBSITE_ID).items():
+                                                                config.SHOP_ID).items():
             print("website-id: %s | name: %s | url: %s" % (website['id'], website['name'], website['url']))
