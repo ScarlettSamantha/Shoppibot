@@ -8,10 +8,6 @@ import config
 
 
 class Shoppimon:
-    def __init__(self, client_id, secret):
-        self.client_id = client_id
-        self.secret = secret
-        self.bearer = None
 
     @staticmethod
     def get_headers(data):
@@ -19,6 +15,33 @@ class Shoppimon:
             "Accept": "application/json",
             "content-type": "application/json",
         }, **data}
+
+    @classmethod
+    def offline(cls, id, secret, website_id):
+        cls(id, secret).disable_testing(website_id)
+
+    @classmethod
+    def online(cls, id, secret, website_id):
+        cls(id, secret).enable_testing(website_id)
+
+    @classmethod
+    def get_shops(cls, id, secret):
+        r = {}
+        for account in cls(id, secret).get_account_details()['_embedded']['account']:
+            r[account['id']] = account['name']
+        return r
+
+    @classmethod
+    def get_website_for_account(cls, id, secret, customer_id):
+        r = {}
+        for website in cls(id, secret).get_websites(customer_id)['_embedded']['website']:
+            r[website['id']] = {website['id'], website['name'], website['base_url']}
+        return r
+
+    def __init__(self, client_id, secret):
+        self.client_id = client_id
+        self.secret = secret
+        self.bearer = None
 
     def post_request(self, endpoint, request, add_key=True):
         return requests.post(endpoint, json=request, headers=self.get_headers(
@@ -58,28 +81,6 @@ class Shoppimon:
 
     def enable_testing(self, website_id):
         return self.patch_request(config.ENDPOINT_WEBSITE % website_id, {"active": True})
-
-    @classmethod
-    def offline(cls, id, secret, website_id):
-        cls(id, secret).disable_testing(website_id)
-
-    @classmethod
-    def online(cls, id, secret, website_id):
-        cls(id, secret).enable_testing(website_id)
-
-    @classmethod
-    def get_shops(cls, id, secret):
-        r = {}
-        for account in cls(id, secret).get_account_details()['_embedded']['account']:
-            r[account['id']] = account['name']
-        return r
-
-    @classmethod
-    def get_website_for_account(cls, id, secret, customer_id):
-        r = {}
-        for website in cls(id, secret).get_websites(customer_id)['_embedded']['website']:
-            r[website['id']] = {website['id'], website['name'], website['base_url']}
-        return r
 
 
 def argument_check(req=4):
