@@ -168,7 +168,7 @@ class Shoppimon:
         """
         return self.get_request(config.ENDPOINT_WEBSITES % customer_id)
 
-    def disable_testing(self, website_id) -> dict:
+    def disable_testing(self, website_id: str) -> dict:
         """Will instruct shoppimon to never test a given website.
         
         Args:
@@ -179,7 +179,7 @@ class Shoppimon:
         """
         return self.patch_request(config.ENDPOINT_WEBSITE % website_id, {"active": False})
 
-    def enable_testing(self, website_id) -> dict:
+    def enable_testing(self, website_id: str) -> dict:
         """Will re-enable testing for a given store, and set it to every 15 min.
         
         Args:
